@@ -26,3 +26,10 @@ jobs:
         path: reports/
         if-no-files-found: error
         retention-days: 30
+    - name: Email report to customer
+      if: ${{ success() && github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.REPORT_EMAIL_ENABLED == 'true' }}
+      run: node scripts/send-report-email.js
+      env:
+        GMAIL_USERNAME: ${{ secrets.GMAIL_USERNAME }}
+        GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+        REPORT_RECIPIENT: ${{ secrets.REPORT_RECIPIENT }}
