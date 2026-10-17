@@ -1,0 +1,35 @@
+{
+  "name": "automationdemoproject",
+  "version": "1.0.0",
+  "description": "E2E QA Platform - Playwright + Cucumber + TypeScript",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "node scripts/generate-report.js",
+    "test:chromium": "node scripts/generate-report.js --tags @chromium",
+    "test:smoke": "node scripts/generate-report.js --tags @smoke",
+    "test:regression": "node scripts/generate-report.js --tags @regression",
+    "test:parallel": "node scripts/generate-report.js --parallel 2",
+    "typecheck": "tsc --noEmit",
+    "report": "node scripts/generate-report.js"
+  },
+  "keywords": [
+    "playwright",
+    "cucumber",
+    "typescript",
+    "qa",
+    "automation"
+  ],
+  "author": "Narendra Vikram Pal",
+  "license": "ISC",
+  "devDependencies": {
+    "@cucumber/cucumber": "^13.3.0",
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^26.6.5",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true
+  }
+}
