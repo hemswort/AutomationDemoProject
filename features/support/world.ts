@@ -15,7 +15,11 @@ export interface World {
 }
 
 Before(async function (this: World) {
-  this.browser = await chromium.launch({ headless: true });
+  const slowMo = Number(process.env.PLAYWRIGHT_SLOW_MO ?? 0);
+  this.browser = await chromium.launch({
+    headless: process.env.HEADLESS !== 'false',
+    slowMo
+  });
   const context = await this.browser.newContext();
   this.page = await context.newPage();
   this.loginPage = new LoginPage(this.page);

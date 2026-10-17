@@ -10,6 +10,7 @@
     "test:smoke": "node scripts/generate-report.js --tags @smoke",
     "test:regression": "node scripts/generate-report.js --tags @regression",
     "test:parallel": "node scripts/generate-report.js --parallel 2",
+    "test:headed": "node scripts/generate-report.js --headed --slow-mo=250",
     "typecheck": "tsc --noEmit",
     "report": "node scripts/generate-report.js"
   },

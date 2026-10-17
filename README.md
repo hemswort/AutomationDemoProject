@@ -16,3 +16,9 @@ repository secrets:
 Then add the repository variable `REPORT_EMAIL_ENABLED` with the value `true`.
 Until enabled, CI runs and uploads the report artifact as usual without sending
 email. Never commit mail credentials or put them in workflow YAML.
+
+## Watch tests run in a browser
+
+Run `npm run test:headed` to open Chromium visibly and watch the complete
+Cucumber suite execute. Actions are slowed slightly for easier viewing. The
+standard `npm test` command and CI workflow remain headless.

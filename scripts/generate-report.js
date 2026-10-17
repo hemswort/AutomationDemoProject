@@ -16,9 +16,21 @@ const cucumberCli = resolve(
 
 await mkdir(reportDirectory, { recursive: true });
 
-const cucumber = spawn(process.execPath, [cucumberCli, ...process.argv.slice(2)], {
+const args = process.argv.slice(2);
+const headed = args.includes('--headed');
+const slowMoArg = args.find((argument) => argument.startsWith('--slow-mo='));
+const cucumberArgs = args.filter(
+  (argument) => argument !== '--headed' && !argument.startsWith('--slow-mo=')
+);
+
+const cucumber = spawn(process.execPath, [cucumberCli, ...cucumberArgs], {
   cwd: projectRoot,
-  stdio: 'inherit'
+  stdio: 'inherit',
+  env: {
+    ...process.env,
+    ...(headed ? { HEADLESS: 'false' } : {}),
+    ...(slowMoArg ? { PLAYWRIGHT_SLOW_MO: slowMoArg.slice('--slow-mo='.length) } : {})
+  }
 });
 
 cucumber.on('error', (error) => {
