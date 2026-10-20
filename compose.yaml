@@ -1,0 +1,8 @@
+services:
+  e2e:
+    build: .
+    init: true
+    environment:
+      CI: "true"
+    volumes:
+      - ./reports:/app/reports
