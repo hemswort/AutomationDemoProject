@@ -3,19 +3,19 @@ End-to-end E-commerce Test Automation Platform using Playwright, TypeScript, Cuc
 
 ## Emailing CI reports
 
-After a successful push to `main`, GitHub Actions can email the Cucumber HTML and
-JSON reports to the configured recipient. Pull request runs do not send email.
+After each completed, non-cancelled push run on `main`, GitHub Actions emails the
+Cucumber HTML and JSON reports to `craddipufeippi-8639@yopmail.com`, including
+when scenarios fail. Pull request runs do not send email.
 
-In the repository's **Settings → Secrets and variables → Actions**, add these
-repository secrets:
+Verify a sending domain in Resend, then configure the following in the
+repository's **Settings → Secrets and variables → Actions**:
 
-- `GMAIL_USERNAME`: Gmail address used to send the report.
-- `GMAIL_APP_PASSWORD`: Gmail app password (requires 2-Step Verification).
-- `REPORT_RECIPIENT`: customer email address.
+- Secret `RESEND_API_KEY`: API key from Resend.
+- Variable `REPORT_FROM_EMAIL`: sender address on the verified Resend domain.
 
-Then add the repository variable `REPORT_EMAIL_ENABLED` with the value `true`.
-Until enabled, CI runs and uploads the report artifact as usual without sending
-email. Never commit mail credentials or put them in workflow YAML.
+The report recipient is configured in `.github/workflows/playwright.yml`.
+Never commit the API key or put it in workflow YAML. Resend will reject sender
+addresses that are not on a verified domain.
 
 ## Watch tests run in a browser
 
