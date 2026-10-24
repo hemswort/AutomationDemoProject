@@ -30,6 +30,6 @@ jobs:
       if: ${{ !cancelled() && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
       run: node scripts/send-report-email.js
       env:
-        GMAIL_USERNAME: ${{ secrets.GMAIL_USERNAME }}
-        GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+        RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        REPORT_FROM_EMAIL: ${{ vars.REPORT_FROM_EMAIL }}
         REPORT_RECIPIENT: craddipufeippi-8639@yopmail.com

@@ -1,9 +1,8 @@
 import { readFile } from 'node:fs/promises';
-import nodemailer from 'nodemailer';
 
 const requiredEnvironment = [
-  'GMAIL_USERNAME',
-  'GMAIL_APP_PASSWORD',
+  'RESEND_API_KEY',
+  'REPORT_FROM_EMAIL',
   'REPORT_RECIPIENT',
   'GITHUB_RUN_NUMBER',
   'GITHUB_SERVER_URL',
@@ -53,20 +52,15 @@ const escapeHtml = (value) =>
     "'": '&#39;'
   })[character]);
 
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.GMAIL_USERNAME,
-    pass: process.env.GMAIL_APP_PASSWORD.replace(/\s/g, '')
-  }
-});
-
-try {
-  await transporter.sendMail({
-    from: `"OrangeHRM Automation" <${process.env.GMAIL_USERNAME}>`,
-    to: process.env.REPORT_RECIPIENT,
+const response = await fetch('https://api.resend.com/emails', {
+  method: 'POST',
+  headers: {
+    Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    from: `OrangeHRM Automation <${process.env.REPORT_FROM_EMAIL}>`,
+    to: [process.env.REPORT_RECIPIENT],
     subject: `OrangeHRM automation report (${testStatus}) — CI run #${process.env.GITHUB_RUN_NUMBER}`,
     text: [
       'Hello,',
@@ -106,18 +100,26 @@ try {
     attachments: [
       {
         filename: `orangehrm-report-${process.env.GITHUB_RUN_NUMBER}.html`,
-        content: reportHtml,
-        contentType: 'text/html'
+        content: Buffer.from(reportHtml).toString('base64')
       },
       {
         filename: `orangehrm-report-${process.env.GITHUB_RUN_NUMBER}.json`,
-        content: reportJson,
-        contentType: 'application/json'
+        content: Buffer.from(reportJson).toString('base64')
       }
     ]
-  });
+  })
+});
 
-  console.log(`Cucumber report emailed to ${process.env.REPORT_RECIPIENT}`);
-} finally {
-  transporter.close();
+const responseBody = await response.text();
+if (!response.ok) {
+  throw new Error(`Resend email delivery failed (${response.status}): ${responseBody}`);
 }
+
+let resendResponse;
+try {
+  resendResponse = JSON.parse(responseBody);
+} catch (error) {
+  throw new Error('Resend returned an invalid JSON response.', { cause: error });
+}
+
+console.log(`Cucumber report emailed to ${process.env.REPORT_RECIPIENT} (Resend ID: ${resendResponse.id})`);

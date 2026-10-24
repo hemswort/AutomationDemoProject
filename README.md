@@ -7,14 +7,15 @@ After each completed, non-cancelled push run on `main`, GitHub Actions emails th
 Cucumber HTML and JSON reports to `craddipufeippi-8639@yopmail.com`, including
 when scenarios fail. Pull request runs do not send email.
 
-In the repository's **Settings → Secrets and variables → Actions**, add these
-repository secrets:
+Verify a sending domain in Resend, then configure the following in the
+repository's **Settings → Secrets and variables → Actions**:
 
-- `GMAIL_USERNAME`: Gmail address used to send the report.
-- `GMAIL_APP_PASSWORD`: Gmail app password (requires 2-Step Verification).
+- Secret `RESEND_API_KEY`: API key from Resend.
+- Variable `REPORT_FROM_EMAIL`: sender address on the verified Resend domain.
 
 The report recipient is configured in `.github/workflows/playwright.yml`.
-Never commit mail credentials or put them in workflow YAML.
+Never commit the API key or put it in workflow YAML. Resend will reject sender
+addresses that are not on a verified domain.
 
 ## Watch tests run in a browser
 
