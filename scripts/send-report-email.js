@@ -42,6 +42,7 @@ const scenarioResults = scenarios.map((scenario) => {
 const passed = scenarioResults.filter((status) => status === 'passed').length;
 const failed = scenarioResults.filter((status) => status === 'failed').length;
 const skipped = scenarioResults.filter((status) => status === 'skipped').length;
+const testStatus = failed === 0 ? 'passed' : 'failed';
 const runUrl = `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`;
 const escapeHtml = (value) =>
   value.replace(/[&<>"']/g, (character) => ({
@@ -66,11 +67,11 @@ try {
   await transporter.sendMail({
     from: `"OrangeHRM Automation" <${process.env.GMAIL_USERNAME}>`,
     to: process.env.REPORT_RECIPIENT,
-    subject: `OrangeHRM automation report — CI run #${process.env.GITHUB_RUN_NUMBER}`,
+    subject: `OrangeHRM automation report (${testStatus}) — CI run #${process.env.GITHUB_RUN_NUMBER}`,
     text: [
       'Hello,',
       '',
-      'The OrangeHRM automated test suite completed successfully.',
+      `The OrangeHRM automated test suite completed with status: ${testStatus}.`,
       `Scenarios: ${scenarios.length} total; ${passed} passed; ${failed} failed; ${skipped} skipped.`,
       `Branch: ${process.env.GITHUB_REF_NAME}`,
       `Commit: ${process.env.GITHUB_SHA}`,
@@ -84,11 +85,11 @@ try {
     <div style="max-width:640px;margin:32px auto;background:#fff;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden">
       <div style="padding:24px 28px;background:#123b5d;color:#fff">
         <h1 style="margin:0;font-size:22px">OrangeHRM Automation Report</h1>
-        <p style="margin:8px 0 0">CI run #${escapeHtml(process.env.GITHUB_RUN_NUMBER)} completed successfully</p>
+        <p style="margin:8px 0 0">CI run #${escapeHtml(process.env.GITHUB_RUN_NUMBER)} completed with status: ${escapeHtml(testStatus)}</p>
       </div>
       <div style="padding:24px 28px">
         <p>Hello,</p>
-        <p>The automated test suite completed. Detailed HTML and JSON reports are attached.</p>
+        <p>The automated test suite completed with status: <strong>${escapeHtml(testStatus)}</strong>. Detailed HTML and JSON reports are attached.</p>
         <p style="padding:16px;background:#f3f8fc;border-radius:6px">
           <strong>${scenarios.length}</strong> scenarios &nbsp;·&nbsp;
           <strong style="color:#16803c">${passed} passed</strong> &nbsp;·&nbsp;
